@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Currency Converter</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/bootstrap.min.css') }}">
+
+    <script src="{{url_for('static', filename='javascript/jquery.min.js')}}"></script>
+    <script src="{{url_for('static', filename='javascript/bootstrap.min.js')}}"></script>
+
+
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+        integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+</head>
+
+<body>
+
+    <nav class="nav">
+        <div class="container">
+            <div class="my_logo">
+                <a href="#">Shalini</a>
+            </div>
+            <div id="mainListDiv" class="main_list">
+                <ul class="navlinks">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Currencies</a></li>
+                    <li><a href="#">About US</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <span class="navBarTrigger">
+                <i></i>
+                <i></i>
+                <i></i>
+            </span>
+        </div>
+    </nav>
+
+
+
+
+
+    <section class="home">
+        <div class="center-text paragraph">
+            <h2 class="heading">BDAT 1004</h2>
+            <p class="paragraph">This is a Currency Conversion App</p>
+            <p class="paragraph">
+                Made by Shalini
+            </p>
+            <p class="paragraph">I HOPE YOU FIND THIS USEFULL</p>
+        </div>
+    </section>
+
+
+    <div style="height: 100vh">
+        <div class="chart-container">
+            <div id="chart_div"></div>
+        </div>
+        </p>
+    </div>
+
+
+
+</body>
+<script>
+     const data = {{ jsonData | tojson }};
+     const {base, rates} = JSON.parse(data);
+     const chartData = Object.keys(rates).reduce((acc, key) => {
+            acc.push({
+                currency: key,
+                value: rates[key]
+            });
+            return acc;
+     }, []);
+     console.log(chartData);
+     const topCurrenciesData = chartData.sort((a, b) => {
+        if(a.value > b.value) {
+            return 1;
+        } else if(b.value > a.value) {
+            return -1;
+        } else {
+            return 0;
+        }
+     }).splice(0, 5);
+    $(window).scroll(function () {
+        if ($(document).scrollTop() > 50) {
+            $('.nav').addClass('affix');
+            console.log("OK");
+        } else {
+            $('.nav').removeClass('affix');
+        }
+    });
+    $('.navBarTrigger').click(function () {
+        $(this).toggleClass('active');
+        $("#mainListDiv").toggleClass("show_nav_list");
+        $("#mainListDiv").fadeIn();
+
+    });
+
+
+    google.charts.load('current', { packages: ['corechart', 'bar'] });
+    google.charts.setOnLoadCallback(drawBasic);
+
+    function drawBasic() {
+
+        var data = google.visualization.arrayToDataTable([
+            ['Currency', 'Value',],
+            ...topCurrenciesData.reduce(function (acc, key) {
+                acc.push([key.currency, key.value]);
+                return acc;
+            }, [])
+        ]);
+
+        var options = {
+            title: 'Currency of world as compared to ' + base,
+            chartArea: { width: '50%' },
+            hAxis: {
+                title: 'Value',
+                minValue: 0
+            },
+            vAxis: {
+                title: 'Currency'
+            },
+            // width: 500,
+            // height: 400,
+
+        };
+
+        var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+
+        chart.draw(data, options);
+    }
+
+    async function saveToPDF() {
+        const element = $(".chart-container")[0];
+        console.log(element);
+        const opt = {
+            margin: 1,
+            filename: "currency-chart.pdf",
+            image: { type: "jpeg", quality: 1 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+        };
+
+        await html2pdf().set(opt).from(element).save();
+    }
+
+</script>
+</html>
