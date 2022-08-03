@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Currency Converter</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/dataTable.min.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/flags.css') }}">
+    
+
+
+    <script src="{{url_for('static', filename='javascript/jquery.min.js')}}"></script>
+    <script src="{{url_for('static', filename='javascript/bootstrap.min.js')}}"></script>
+    <script src="{{url_for('static', filename='javascript/jquery.dataTables.min.js')}}"></script>
+    <script src="{{url_for('static', filename='javascript/dataTable.bootstrap.min.js')}}"></script>
+
+
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+        integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+
+    
+
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/">Shalini</a>
+          <div class="collapse navbar-collapse" id="mynavbar">
+            <ul class="navbar-nav me-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="/">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/currencies">Currencies</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/conversion">Conversion</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      
+
+    <section class="container">
+        <h2>Currencies</h2>
+        <p id="table-heading">Currencies in comparision with USD on </p>
+        <table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Country</th>
+                    <th>Currency</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </section>
+
+</body>
+<script>
+     const data = {{ jsonData | tojson }};
+     const currencyNameData = `{{countryNames}}`.split(',');
+     for(let i = 0; i < currencyNameData.length; i++) {
+        const option = $(`<option value=${currencyNameData[i]} >${currencyNameData[i]}</option>`);
+            $("#currency").append(option)
+     }
+     const {base, rates} = JSON.parse(data);
+     const currencyData = Object.keys(rates).reduce((acc, key) => {
+            acc.push({
+                currency: key,
+                value: rates[key]
+            });
+            return acc;
+     }, []);
+     $("#table-heading").html(`Currencies in comparision with USD on ${new Date().toDateString()}`)
+
+
+$(document).ready(function () {
+    $('#dtBasicExample').DataTable({
+        columnDefs: [{
+            orderable: false,
+            targets: 0
+        }]
+    });
+    $("#dtBasicExample_filter").css({ "margin": "10px 0" });
+    $("#dtBasicExample_filter input").css({ "margin-left": "10px" });
+});
+    
+for (let index = 0; index < currencyData.length; index++) {
+        let tr = $("<tr></tr>");
+        let tdCountry = $("<td></td>");
+        let tdCurrency = $("<td></td>");
+        let tdvalue = $("<td></td>");
+
+        tdCountry.html(`<span class="currency-flag currency-flag-${currencyData[index].currency.toLowerCase()}"></span>`)
+        tr.append(tdCountry);
+        tdCurrency.html(currencyData[index].currency)
+        tr.append(tdCurrency);
+        tdvalue.html(currencyData[index].value)
+        tr.append(tdvalue);
+        $("tbody").append(tr);
+    }
+
+    async function saveToPDF() {
+        const element = $(".chart-container")[0];
+        console.log(element);
+        const opt = {
+            margin: 1,
+            filename: "currency-chart.pdf",
+            image: { type: "jpeg", quality: 1 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+        };
+
+        await html2pdf().set(opt).from(element).save();
+    }
+
+    $(document).ready(function() {
+  $('.nav-link.active').removeClass('active').removeAttr('aria-current');
+  $('a[href="' + location.pathname + '"]').addClass('active').attr('aria-current', 'page'); 
+});
+</script>
+</html>
