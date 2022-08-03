@@ -1,26 +1,13 @@
 .currency-flag {
   display: inline-block;
-  width: 24px;
+  width: 36px;
   height: 24px;
   background-size: cover;
   vertical-align: middle;
   margin-right: 10px;
 }
 
-.currency-flag-sm {
-  width: 16px;
-  height: 10px;
-}
 
-.currency-flag-lg {
-  width: 36px;
-  height: 24px;
-}
-
-.currency-flag-xl {
-  width: 48px;
-  height: 32px;
-}
 
 .currency-flag.currency-flag-aed {
   background-image: url('../images/flags/aed.png');
