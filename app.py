@@ -11,7 +11,6 @@ app = Flask(__name__, template_folder='templates')
 
 user = os.getenv("MONGODB_USER")
 password = os.getenv("MONGODB_PASS")
-print(user)
 client = MongoClient(f"mongodb://{user}:{urllib.parse.quote(password)}@ac-qcg93v9-shard-00-00.wjt7sxv.mongodb.net:27017,ac-qcg93v9-shard-00-01.wjt7sxv.mongodb.net:27017,ac-qcg93v9-shard-00-02.wjt7sxv.mongodb.net:27017/?ssl=true&replicaSet=atlas-lqwqhj-shard-0&authSource=admin&retryWrites=true&w=majority", connect=False)
 db = client.currency
 
@@ -51,7 +50,6 @@ def conversion():
         jsonData = json.dumps(x, indent=4, default=json_util.default)
         countryNames = ','.join(list(json.loads(jsonData)['rates'].keys()))
     if(request.method == "GET"):
-        print(countryNames)
         return render_template('conversion.html', countryNames=countryNames)
     if(request.method == "POST"):
         data = json.loads(jsonData)['rates']
