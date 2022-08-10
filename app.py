@@ -28,7 +28,6 @@ def getData():
     r = requests.get(f'https://api.exchangerate.host/latest?base=USD&symbols={stringData})')
     if r.status_code == 200:
         ExchangeRateData = r.json()
-        print(ExchangeRateData)
         db.currency.insert_one({
             "rates": ExchangeRateData["rates"],
             "date": ExchangeRateData["date"],
@@ -40,7 +39,7 @@ getData()
 
 @app.route('/')
 def index():
-    currentDate = date()
+    currentDate = date().today()
     formatedDate = currentDate.strftime("%Y-%m-%d")
     data = db.currency.find({"date": formatedDate})
     jsonData = {}
