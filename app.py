@@ -101,4 +101,4 @@ def conversion():
         convertedAmount = (data[conversionCurrency] / data[baseCurrency]) * float(baseAmount)
         return render_template('conversion.html', countryNames=countryNames, baseCurrency=baseCurrency, conversionCurrency=conversionCurrency, baseAmount=baseAmount, convertedAmount=convertedAmount)
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
