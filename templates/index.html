@@ -2,117 +2,150 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Currency Converter</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Currency Converter</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/bootstrap.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/bootstrap.min.css') }}">
 
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
-    
-    <script src="{{url_for('static', filename='javascript/jquery.min.js')}}"></script>
-    <script src="{{url_for('static', filename='javascript/bootstrap.min.js')}}"></script>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}">
 
-
+  <script src="{{url_for('static', filename='javascript/jquery.min.js')}}"></script>
+  <script src="{{url_for('static', filename='javascript/bootstrap.min.js')}}"></script>
 
 
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
-        integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+    integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 </head>
 
 <body>
 
-      <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="/">BDAT1004_Final_Project</a>
-          <div class="collapse navbar-collapse" id="mynavbar">
-            <ul class="navbar-nav me-auto">
-              <li class="nav-item">
-                <a class="nav-link" href="/">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/currencies">Currencies</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/conversion">Conversion</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-      
-    <section class="container home">
-      <div class="intro-paragraph">
-        <h1 class="heading">ALL</h1>
-        
-        <h3>You need to know</h3>
-        <h4>
-            About the currencies of the world
+  <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">BDAT1004_Final_Project</a>
+      <div class="collapse navbar-collapse" id="mynavbar">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/currencies">Currencies</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/conversion">Conversion</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section class="container home">
+    <div class="intro-paragraph">
+      <h1 class="heading">ALL</h1>
+
+      <h3>You need to know</h3>
+      <h4>
+        About the currencies of the world
         </h5>
         <h6>Portal for the latest information and analysis of international currencies. </h6>
     </div>
-      <p><img src="../static/images/background.jpg" alt="background" class="background-image"></p>
-    </section>
+    <p><img src="../static/images/background.jpg" alt="background" class="background-image"></p>
+  </section>
 
-    <div style="height: 100vh">
-        <div class="chart-container">
-            <div id="chart_div"></div>
-        </div>
-        </p>
+  <div style="height: 100vh">
+    <div class="chart-container">
+      <div id="chart_div" style="margin-bottom: 10%;"></div>
+      <div id="curve_chart"></div>
     </div>
+    </p>
+  </div>
 
 
 
 </body>
 <script>
-     const data = {{ jsonData | tojson }};
-     const {base, rates} = JSON.parse(data);
-     const chartData = Object.keys(rates).reduce((acc, key) => {
-            acc.push({
-                currency: key,
-                value: rates[key]
-            });
-            return acc;
-     }, []);
-     const topCurrenciesData = chartData.sort((a, b) => {
-        if(a.value > b.value) {
-            return 1;
-        } else if(b.value > a.value) {
-            return -1;
-        } else {
-            return 0;
-        }
-     }).splice(0, 5);
-   
-    google.charts.load('current', { packages: ['corechart', 'bar'] });
-    google.charts.setOnLoadCallback(drawBasic);
+  const data = {{ jsonData | tojson }};
+  const { base, rates } = JSON.parse(data);
 
-    function drawBasic() {
+  const lastWeekData = {{ jsonDataForRange | tojson }};
+  let lineChartData = []
+  for(i = 0; i < lastWeekData.length; i++) {
+    let parsedData = JSON.parse(lastWeekData[i])
+    lineChartData.push([parsedData.date, parsedData.rates.EUR,parsedData.rates.GBP,parsedData.rates.CHF,parsedData.rates.CAD])
+  }
+  google.charts.load('current', { packages: ['corechart', 'bar'] });
+  google.charts.load('current', {'packages':['line']});
+  google.charts.setOnLoadCallback(drawBarChart);
+  google.charts.setOnLoadCallback(drawLineChart);
 
-        var data = google.visualization.arrayToDataTable([
-            ['Currency', 'Value',],
-            ...topCurrenciesData.reduce(function (acc, key) {
-                acc.push([key.currency, key.value]);
-                return acc;
-            }, [])
-        ]);
 
-        var options = {
-            title: 'Currency of world as compared to ' + base,
-            chartArea: { width: '50%'},
-            hAxis: {
-                title: 'Value',
-                minValue: 0
-            },
-            vAxis: {
-                title: 'Currency'
-            },
+  function drawLineChart() {
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Date');
+      data.addColumn('number', 'EUR');
+      data.addColumn('number', 'GBP');
+      data.addColumn('number', 'CHF');
+      data.addColumn('number', 'CAD');
+      data.addRows([
+        ...lineChartData
+      ]);
+
+    var options = {
+      title: 'Fluctuations in values of most traded currencies in range of last 1 week, base : USD',
+      chartArea: { width: '50%' },
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+    chart.draw(data, options);
+  }
+
+
+
+  function drawBarChart() {
+    const chartData = Object.keys(rates).reduce((acc, key) => {
+      acc.push({
+        currency: key,
+        value: rates[key]
+      });
+      return acc;
+    }, []);
+    const topCurrenciesData = chartData.sort((a, b) => {
+      if (a.value > b.value) {
+        return 1;
+      } else if (b.value > a.value) {
+        return -1;
+      } else {
+        return 0;
+      }
+    }).splice(0, 5);
+
+    var data = google.visualization.arrayToDataTable([
+      ['Currency', 'Value',],
+      ...topCurrenciesData.reduce(function (acc, key) {
+        acc.push([key.currency, (1 / key.value)]);
+        return acc;
+      }, [])
+    ]);
+
+    var options = {
+      title: base + " Value of highest valued currencies of the world!",
+      chartArea: { width: '50%' },
+      hAxis: {
+        title: 'Value',
+        minValue: 0
+      },
+      vAxis: {
+        title: 'Currency'
+      },
       //       backgroundColor: {
       //   gradient: {
       //     color1: '#6f7280',
@@ -121,30 +154,28 @@
       //     x2: '100%', y2: '100%',
       //   },
       // },
-           
+    };
+    var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
 
-        };
-        var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+    chart.draw(data, options);
+  }
 
-        chart.draw(data, options);
-    }
+  async function saveToPDF() {
+    const element = $(".chart-container")[0];
+    const opt = {
+      margin: 1,
+      filename: "currency-chart.pdf",
+      image: { type: "jpeg", quality: 1 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+    };
 
-    async function saveToPDF() {
-        const element = $(".chart-container")[0];
-        console.log(element);
-        const opt = {
-            margin: 1,
-            filename: "currency-chart.pdf",
-            image: { type: "jpeg", quality: 1 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
-        };
-
-        await html2pdf().set(opt).from(element).save();
-    }
-    $(document).ready(function() {
-  $('.nav-link.active').removeClass('active').removeAttr('aria-current');
-  $('a[href="' + location.pathname + '"]').addClass('active').attr('aria-current', 'page'); 
-});
+    await html2pdf().set(opt).from(element).save();
+  }
+  $(document).ready(function () {
+    $('.nav-link.active').removeClass('active').removeAttr('aria-current');
+    $('a[href="' + location.pathname + '"]').addClass('active').attr('aria-current', 'page');
+  });
 </script>
+
 </html>

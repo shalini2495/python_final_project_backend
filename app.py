@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 import json
 from bson import json_util
 import os
-from datetime import date
+from datetime import date, datetime, timedelta
 
 SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
 
@@ -34,18 +34,37 @@ def getData():
             "base": ExchangeRateData["base"]
         })
 # schedule.every().day.at("01:00").do(getData)
-getData()
+# getData()
 
 
 @app.route('/')
 def index():
-    currentDate = date().today()
+    currentDate = date.today()
     formatedDate = currentDate.strftime("%Y-%m-%d")
-    data = db.currency.find({"date": formatedDate})
-    jsonData = {}
+    formatedDateBeforeOneWeek = (currentDate - timedelta(weeks=1)).strftime("%Y-%m-%d")
+    findQuery = {
+    '$and': [
+        {
+            'date': {
+                '$lte': formatedDate
+            }
+        }, {
+            'date': {
+                '$gte': formatedDateBeforeOneWeek
+            }
+        }
+    ]
+}
+    data = db.currency.find(findQuery)
+    dataForCurrentDay = db.currency.find({"date": formatedDate})
+    jsonDataForCurrentDate = {}
+    jsonDataForRange = []
     for x in data:
-        jsonData = json.dumps(x, indent=4, default=json_util.default)
-    return render_template("index.html", jsonData=jsonData)
+        jsonDataForRange.append(json.dumps(x, indent=4, default=json_util.default))
+    for x in dataForCurrentDay:
+        jsonDataForCurrentDate = json.dumps(x, indent=4, default=json_util.default)
+    return render_template("index.html", jsonData=jsonDataForCurrentDate, jsonDataForRange=jsonDataForRange)
+
 
 @app.route('/currencies')
 def getAllCurrencies():
@@ -82,4 +101,4 @@ def conversion():
         convertedAmount = (data[conversionCurrency] / data[baseCurrency]) * float(baseAmount)
         return render_template('conversion.html', countryNames=countryNames, baseCurrency=baseCurrency, conversionCurrency=conversionCurrency, baseAmount=baseAmount, convertedAmount=convertedAmount)
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
