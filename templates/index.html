@@ -10,11 +10,12 @@
 
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/bootstrap.min.css') }}">
 
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+    
     <script src="{{url_for('static', filename='javascript/jquery.min.js')}}"></script>
     <script src="{{url_for('static', filename='javascript/bootstrap.min.js')}}"></script>
 
 
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
 
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -79,7 +80,6 @@
             });
             return acc;
      }, []);
-     console.log(chartData);
      const topCurrenciesData = chartData.sort((a, b) => {
         if(a.value > b.value) {
             return 1;
@@ -124,7 +124,6 @@
            
 
         };
-console.log('here')
         var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
 
         chart.draw(data, options);

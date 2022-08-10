@@ -2,116 +2,119 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Currency Converter</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Currency Converter</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static',filename='styles/dataTable.min.css') }}">
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/flags.css') }}">
-    
-
-
-    <script src="{{url_for('static', filename='javascript/jquery.min.js')}}"></script>
-    <script src="{{url_for('static', filename='javascript/bootstrap.min.js')}}"></script>
-    <script src="{{url_for('static', filename='javascript/jquery.dataTables.min.js')}}"></script>
-    <script src="{{url_for('static', filename='javascript/dataTable.bootstrap.min.js')}}"></script>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='styles/dataTable.min.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/flags.css') }}">
 
 
 
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script src="{{url_for('static', filename='javascript/jquery.min.js')}}"></script>
+  <script src="{{url_for('static', filename='javascript/bootstrap.min.js')}}"></script>
+  <script src="{{url_for('static', filename='javascript/jquery.dataTables.min.js')}}"></script>
+  <script src="{{url_for('static', filename='javascript/dataTable.bootstrap.min.js')}}"></script>
 
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+
+
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
         integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
 
-    
+
 
 
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="/">Shalini</a>
-          <div class="collapse navbar-collapse" id="mynavbar">
-            <ul class="navbar-nav me-auto">
-              <li class="nav-item">
-                <a class="nav-link" href="/">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/currencies">Currencies</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/conversion">Conversion</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-      
+  <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">Shalini</a>
+      <div class="collapse navbar-collapse" id="mynavbar">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/currencies">Currencies</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/conversion">Conversion</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-    <section class="container">
-        <h2>Conversion</h2>
-        <form action="" method="post">
-            <div class="currency-form-content">
-            <div class="currency-group">
-            <div class="form-group">
-                <div>
+
+  <section class="container">
+    <h2>Conversion</h2>
+    <form action="" method="post">
+      <div class="currency-form-content">
+        <div class="currency-group">
+          <div class="form-group">
+            <div>
 
               <label for="baseCurrency">Select base:</label>
               <select class="form-control" id="baseCurrency" name="baseCurrency">
-               
+
               </select>
-              <input type="text" class="form-control amount" id="baseAmount" name="baseAmount" placeholder="Enter Amount">
+              <input type="text" class="form-control amount" id="baseAmount" name="baseAmount"
+                placeholder="Enter Amount">
             </div>
+          </div>
+          <div class="form-group">
+            <div>
+              <label for="conversionCurrency">Select conversion:</label>
+              <select class="form-control" id="conversionCurrency" name="conversionCurrency">
+
+              </select>
+              <input type="text" id="convertedAmount" name="convertedAmount" class="form-control amount"
+                placeholder="Converted Rate" readonly>
             </div>
-            <div class="form-group">
-                <div>
-                <label for="conversionCurrency">Select conversion:</label>
-                <select class="form-control" id="conversionCurrency" name="conversionCurrency">
-                 
-                </select>
-                <input type="text" id="convertedAmount" name="convertedAmount" class="form-control amount" placeholder="Converted Rate" readonly>
-              </div>
-            </div>
-            </div>
-            <button class="btn btn-dark" type="submit">Get Rates</button>
+          </div>
         </div>
-          </form>
-          </section>
+        <button class="btn btn-dark" type="submit">Get Rates</button>
+      </div>
+    </form>
+  </section>
 
 </body>
 <script>
-     const currencyNameData = `{{countryNames}}`.split(',');
-     for(let i = 0; i < currencyNameData.length; i++) {
-        const baseOption = $(`<option value=${currencyNameData[i]} >${currencyNameData[i]}</option>`);
-        const option = $(`<option value=${currencyNameData[i]} >${currencyNameData[i]}</option>`);
-            $("#baseCurrency").append(baseOption)
-            $("#conversionCurrency").append(option)
-     }
-     const convertedAmountValue = `{{convertedAmount}}`
-     const baseCurrencyValue = `{{baseCurrency}}`
-     const conversionCurrencyValue = `{{conversionCurrency}}`
-     const baseAmountValue = `{{baseAmount}}`
-     if(convertedAmountValue) {
-        $("#convertedAmount").val(convertedAmountValue)
-     }
-     if(baseCurrencyValue) {
-        $("#baseCurrency").val(baseCurrencyValue)
-    }
-    if(conversionCurrencyValue) {
-        $("#conversionCurrency").val(conversionCurrencyValue)
-    }
-    if(baseAmountValue) {
-        $("#baseAmount").val(baseAmountValue)
-    }
-    $(document).ready(function() {
-  $('.nav-link.active').removeClass('active').removeAttr('aria-current');
-  $('a[href="' + location.pathname + '"]').addClass('active').attr('aria-current', 'page'); 
-});
+  const currencyNameData = `{{countryNames}}`.split(',');
+  for (let i = 0; i < currencyNameData.length; i++) {
+    const baseOption = $(`<option value=${currencyNameData[i]} >${currencyNameData[i]}</option>`);
+    const option = $(`<option value=${currencyNameData[i]} >${currencyNameData[i]}</option>`);
+    $("#baseCurrency").append(baseOption)
+    $("#conversionCurrency").append(option)
+  }
+  const convertedAmountValue = `{{convertedAmount}}`
+  const baseCurrencyValue = `{{baseCurrency}}`
+  const conversionCurrencyValue = `{{conversionCurrency}}`
+  const baseAmountValue = `{{baseAmount}}`
+  if (convertedAmountValue) {
+    $("#convertedAmount").val(convertedAmountValue)
+  }
+  if (baseCurrencyValue) {
+    $("#baseCurrency").val(baseCurrencyValue)
+  }
+  if (conversionCurrencyValue) {
+    $("#conversionCurrency").val(conversionCurrencyValue)
+  }
+  if (baseAmountValue) {
+    $("#baseAmount").val(baseAmountValue)
+  }
+  $(document).ready(function () {
+    $('.nav-link.active').removeClass('active').removeAttr('aria-current');
+    $('a[href="' + location.pathname + '"]').addClass('active').attr('aria-current', 'page');
+  });
 </script>
+
 </html>
