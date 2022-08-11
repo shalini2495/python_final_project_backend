@@ -1,16 +1,16 @@
-from xml.etree.ElementInclude import include
-from flask import Flask, jsonify, request, render_template
-from pkg_resources import require
+from flask import Flask, request, render_template
 from pymongo import MongoClient
 import urllib
-import time
+import pytz
 import requests
-import schedule
 from dotenv import load_dotenv
 import json
 from bson import json_util
 import os
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
+from apscheduler.schedulers.background import BackgroundScheduler
+
+import atexit
 
 # Creating flask framework
 
@@ -31,25 +31,35 @@ def getData():
     countries = os.path.join(SITE_ROOT, "static/data", "countries.json")
     data = json.load(open(countries))
     stringData = ",".join(data)
-    
     r = requests.get(f'https://api.exchangerate.host/latest?base=USD&symbols={stringData})')
     if r.status_code == 200:
         ExchangeRateData = r.json()
-        db.currency.insert_one({
+        db.currency.update_one(
+            {"date": ExchangeRateData["date"]},
+            {"$setOnInsert": {
             "rates": ExchangeRateData["rates"],
             "date": ExchangeRateData["date"],
             "base": ExchangeRateData["base"]
-        })
+            }},
+            upsert=True
+        )
 # Batch job that runs at 08:00 EST to match GMT time of 00:00 in order to be in sync with server and api     
-schedule.every().day.at("01:50").do(getData)
-getData()
+scheduler = BackgroundScheduler(daemon=True)
+scheduler.add_job(func=getData, trigger="interval", hours=1)
+scheduler.start()
+
+# Shut down the scheduler when exiting the app
+atexit.register(lambda: scheduler.shutdown())
+
+current_timezone = pytz.timezone("Canada/Eastern")
+now = datetime.now().astimezone(current_timezone)
+
 
 # creating api to post data to our index.html page
 @app.route('/')
 def index():
-    currentDate = date.today()
-    formatedDate = currentDate.strftime("%Y-%m-%d")
-    formatedDateBeforeOneWeek = (currentDate - timedelta(weeks=1)).strftime("%Y-%m-%d")
+    formatedDate = now.strftime("%Y-%m-%d")
+    formatedDateBeforeOneWeek = (now - timedelta(weeks=2)).strftime("%Y-%m-%d")
     # Getting data by range of date
     findQuery = {
         '$and': [
@@ -83,7 +93,9 @@ def getAllCurrencies():
         'rates': 1,
         '_id': 0
         }
+    formatedDate = now.strftime("%Y-%m-%d")
     result = client['currency']['currency'].find(
+        {"date": formatedDate},
         projection=project
     )
     for x in result:
@@ -97,7 +109,9 @@ def conversion():
         'rates': 1,
         '_id': 0
         }
+    formatedDate = now.strftime("%Y-%m-%d")
     result = client['currency']['currency'].find(
+        {"date": formatedDate},
         projection=project
     )
     for x in result:

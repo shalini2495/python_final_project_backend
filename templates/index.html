@@ -20,18 +20,18 @@
 
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
-    integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
 </head>
 
 <body>
 
-  <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
+
+  <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
     <div class="container-fluid">
       <a class="navbar-brand" href="/">BDAT1004_Final_Project</a>
-      <div class="collapse navbar-collapse" id="mynavbar">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="collapsibleNavbar">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
             <a class="nav-link" href="/">Home</a>
@@ -46,7 +46,7 @@
       </div>
     </div>
   </nav>
-
+  
   <section class="container home">
     <div class="intro-paragraph">
       <h1 class="heading">ALL</h1>
@@ -60,14 +60,10 @@
     <p><img src="../static/images/background.jpg" alt="background" class="background-image"></p>
   </section>
 
-  <div style="height: 100vh">
     <div class="chart-container">
       <div id="chart_div" style="margin-bottom: 10%;width: 100%;"></div>
-      <!-- <button style="margin-bottom: 10%;" onclick="saveToPDF('chart_div')">Download PDF</button> -->
       <div id="curve_chart" style="width: 100%;"></div>
-      <!-- <button onclick="saveToPDF('curve_chart')">Download PDF</button> -->
     </div>
-  </div>
 
 
 </body>
@@ -79,7 +75,10 @@
   let lineChartData = []
   for(i = 0; i < lastWeekData.length; i++) {
     let parsedData = JSON.parse(lastWeekData[i])
-    lineChartData.push([parsedData.date, parsedData.rates.EUR,parsedData.rates.GBP,parsedData.rates.CHF,parsedData.rates.CAD])
+    let year = new Date(parsedData.date).getUTCFullYear();
+    let month = new Date(parsedData.date).getUTCMonth();
+    let day = new Date(parsedData.date).getUTCDate();
+    lineChartData.push([new Date(year, month, day), parsedData.rates.EUR,parsedData.rates.GBP,parsedData.rates.CHF,parsedData.rates.CAD])
   }
   google.charts.load('current', { packages: ['corechart', 'bar'] });
   google.charts.load('current', {'packages':['line']});
@@ -89,7 +88,7 @@
 
   function drawLineChart() {
     var data = new google.visualization.DataTable();
-    data.addColumn('string', 'Date');
+    data.addColumn('date', 'Date');
       data.addColumn('number', 'EUR');
       data.addColumn('number', 'GBP');
       data.addColumn('number', 'CHF');
@@ -100,7 +99,7 @@
 
     var options = {
       title: 'Fluctuations in values of most traded currencies in range of last 1 week, base : USD',
-      chartArea: { width: '50%' },
+      chartArea: { width: '80%' },
     };
 
     var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
@@ -151,21 +150,6 @@
 
     chart.draw(data, options);
   }
-
-  async function saveToPDF() {
-        const element = $(".chart-container")[0];
-        console.log(element);
-        const opt = {
-            margin: 1,
-            filename: "currency-chart.pdf",
-            image: { type: "jpeg", quality: 1 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: "cm", format: "letter", orientation: "portrait" },
-        };
-
-        await html2pdf().set(opt).from(element).save();
-    }
-
   $(document).ready(function () {
     $('.nav-link.active').removeClass('active').removeAttr('aria-current');
     $('a[href="' + location.pathname + '"]').addClass('active').attr('aria-current', 'page');
