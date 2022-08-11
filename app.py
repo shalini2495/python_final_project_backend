@@ -31,6 +31,7 @@ def getData():
     countries = os.path.join(SITE_ROOT, "static/data", "countries.json")
     data = json.load(open(countries))
     stringData = ",".join(data)
+    print("inside the code")
     r = requests.get(f'https://api.exchangerate.host/latest?base=USD&symbols={stringData})')
     if r.status_code == 200:
         ExchangeRateData = r.json()
@@ -43,21 +44,24 @@ def getData():
             }},
             upsert=True
         )
-# Batch job that runs at 08:00 EST to match GMT time of 00:00 in order to be in sync with server and api     
+# Batch job that runs ebery 24 hours as per Canada/Eastern timezone    
+current_timezone = pytz.timezone("Canada/Eastern")
+now = datetime.now().astimezone(current_timezone)
+
+
 scheduler = BackgroundScheduler(daemon=True)
-scheduler.add_job(func=getData, trigger="interval", hours=1)
+scheduler.add_job(func=getData, trigger="interval", minutes=2, next_run_time=datetime.now().astimezone(current_timezone), timezone=current_timezone)
 scheduler.start()
 
 # Shut down the scheduler when exiting the app
 atexit.register(lambda: scheduler.shutdown())
 
-current_timezone = pytz.timezone("Canada/Eastern")
-now = datetime.now().astimezone(current_timezone)
 
 
 # creating api to post data to our index.html page
 @app.route('/', methods=['POST', 'GET'])
 def index():
+    now = datetime.now().astimezone(current_timezone)
     formatedDate = now.strftime("%Y-%m-%d")
     if (request.method == "GET"):
         deltaWeeks = 1
@@ -96,6 +100,7 @@ def index():
 
 # getting all the data from mongodb
 def getAllCurrencies():
+    now = datetime.now().astimezone(current_timezone)
     project={
         'rates': 1,
         '_id': 0
@@ -112,6 +117,7 @@ def getAllCurrencies():
  # creating api to post data to our conversion.html page   
 @app.route('/conversion', methods=['POST', 'GET'])
 def conversion():
+    now = datetime.now().astimezone(current_timezone)
     project={
         'rates': 1,
         '_id': 0
