@@ -2,17 +2,22 @@
     width: 100%;
     display: flex;
     justify-content: space-around;
+    align-items: center;
 }
-.home > p {
+
+.home>p {
     width: 100%;
 }
+
 .background-image {
     width: 100%;
 }
+
 .intro-paragraph {
     align-self: center;
     width: 100%;
 }
+
 section.container {
     margin-top: 70px;
 }
@@ -40,22 +45,27 @@ table.dataTable thead .sorting_desc_disabled:after,
 table.dataTable thead .sorting_desc_disabled:before {
     bottom: .5em;
 }
+
 .mw15 {
     max-width: 15%;
 }
+
 .currency-group {
     display: flex;
     justify-content: space-between;
     max-width: 50%;
     width: 100%;
 }
-.currency-group > .form-group {
+
+.currency-group>.form-group {
     width: 100%;
     margin: 10px;
 }
-.currency-group > .form-group > div > .amount {
+
+.currency-group>.form-group>div>.amount {
     margin-top: 10px;
 }
+
 .currency-form-content {
     display: flex;
     flex-direction: column;
@@ -63,14 +73,29 @@ table.dataTable thead .sorting_desc_disabled:before {
     width: 100%;
     align-items: center;
 }
-.currency-form-content > button {
+
+.currency-form-content>button {
     align-self: center;
 }
 
 .chart-container {
     width: 100%;
-    height: 100vh;
-    display: flex; 
-    align-items: center; 
+    height: 100%;
+    display: flex;
+    align-items: center;
     flex-direction: column;
+    margin-bottom: 10%;
+}
+
+.radioForm {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.radioButtons {
+    margin-bottom: 2%;
+}
+.radio-group {
+    margin-right: 10px;
 }

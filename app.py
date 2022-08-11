@@ -56,10 +56,15 @@ now = datetime.now().astimezone(current_timezone)
 
 
 # creating api to post data to our index.html page
-@app.route('/')
+@app.route('/', methods=['POST', 'GET'])
 def index():
     formatedDate = now.strftime("%Y-%m-%d")
-    formatedDateBeforeOneWeek = (now - timedelta(weeks=1)).strftime("%Y-%m-%d")
+    if (request.method == "GET"):
+        deltaWeeks = 1
+    if(request.method == "POST"):
+        deltaWeeks = request.form['week']
+    formatedDateBeforeOneWeek = (now - timedelta(weeks=int(deltaWeeks))).strftime("%Y-%m-%d")
+    
     # Getting data by range of date
     findQuery = {
         '$and': [
@@ -74,16 +79,18 @@ def index():
             }
         ]
     }
+
     data = db.currency.find(findQuery)
     dataForCurrentDay = db.currency.find({"date": formatedDate})
     jsonDataForCurrentDate = {}
     jsonDataForRange = []
     for x in data:
-        jsonDataForRange.append(json.dumps(x, indent=4, default=json_util.default))
+        jsonDataForRange.append(json.dumps(
+            x, indent=4, default=json_util.default))
     for x in dataForCurrentDay:
-        jsonDataForCurrentDate = json.dumps(x, indent=4, default=json_util.default)
-    return render_template("index.html", jsonData=jsonDataForCurrentDate, jsonDataForRange=jsonDataForRange)
-
+        jsonDataForCurrentDate = json.dumps(
+            x, indent=4, default=json_util.default)
+    return render_template("index.html", jsonData=jsonDataForCurrentDate, jsonDataForRange=jsonDataForRange, deltaWeeks=deltaWeeks)
 # creating api to post data to our currencies.html page
 @app.route('/currencies')
 
@@ -130,4 +137,4 @@ def conversion():
         convertedAmount = (data[conversionCurrency] / data[baseCurrency]) * float(baseAmount)
         return render_template('conversion.html', countryNames=countryNames, baseCurrency=baseCurrency, conversionCurrency=conversionCurrency, baseAmount=baseAmount, convertedAmount=convertedAmount)
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=True)

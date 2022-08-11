@@ -14,12 +14,7 @@
 
   <script src="{{url_for('static', filename='javascript/jquery.min.js')}}"></script>
   <script src="{{url_for('static', filename='javascript/bootstrap.min.js')}}"></script>
-
-
-
-
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
 </head>
 
 <body>
@@ -46,7 +41,7 @@
       </div>
     </div>
   </nav>
-  
+
   <section class="container home">
     <div class="intro-paragraph">
       <h1 class="heading">ALL</h1>
@@ -60,28 +55,54 @@
     <p><img src="../static/images/background.jpg" alt="background" class="background-image"></p>
   </section>
 
-    <div class="chart-container">
-      <div id="chart_div" style="margin-bottom: 10%;width: 100%;"></div>
-      <div id="curve_chart" style="width: 100%;"></div>
-    </div>
+  <div class="chart-container">
+    <div id="chart_div" style="margin-bottom: 8%;width: 100%;"></div>
+    <form class="radioForm" action="" method="post">
+
+      <p>Please select how many weeks of data you want to see in the line chart:</p>
+
+      <div class="radioButtons">
+        <span class="radio-group">
+        <input type="radio" id="week1" name="week" value="1">
+        <label for="week1">1</label>
+      </span>
+      <span class="radio-group">
+        <input type="radio" id="week2" name="week" value="2">
+        <label for="week2">2</label>
+      </span>
+      <span class="radio-group">
+        <input type="radio" id="week3" name="week" value="3">
+        <label for="week3">3</label>
+      </span>
+      <span class="radio-group">
+        <input type="radio" id="week4" name="week" value="4">
+        <label for="week4">4</label>
+      </span>
+      </div>
+      <button type="submit">Select Number of Weeks</button>
+    </form>
+    <div id="curve_chart" style="width: 100%;"></div>
+  </div>
 
 
 </body>
 <script>
   const data = {{ jsonData | tojson }};
   const { base, rates } = JSON.parse(data);
+  const deltaWeeksValue = {{ deltaWeeks }};
 
+  $(`#week${deltaWeeksValue}`)[0].checked = true;
   const lastWeekData = {{ jsonDataForRange | tojson }};
   let lineChartData = []
-  for(i = 0; i < lastWeekData.length; i++) {
+  for (i = 0; i < lastWeekData.length; i++) {
     let parsedData = JSON.parse(lastWeekData[i])
     let year = new Date(parsedData.date).getUTCFullYear();
     let month = new Date(parsedData.date).getUTCMonth();
     let day = new Date(parsedData.date).getUTCDate();
-    lineChartData.push([new Date(year, month, day), parsedData.rates.EUR,parsedData.rates.GBP,parsedData.rates.CHF,parsedData.rates.CAD])
+    lineChartData.push([new Date(year, month, day), parsedData.rates.EUR, parsedData.rates.GBP, parsedData.rates.CHF, parsedData.rates.CAD])
   }
   google.charts.load('current', { packages: ['corechart', 'bar'] });
-  google.charts.load('current', {'packages':['line']});
+  google.charts.load('current', { 'packages': ['line'] });
   google.charts.setOnLoadCallback(drawBarChart);
   google.charts.setOnLoadCallback(drawLineChart);
 
@@ -89,17 +110,22 @@
   function drawLineChart() {
     var data = new google.visualization.DataTable();
     data.addColumn('date', 'Date');
-      data.addColumn('number', 'EUR');
-      data.addColumn('number', 'GBP');
-      data.addColumn('number', 'CHF');
-      data.addColumn('number', 'CAD');
-      data.addRows([
-        ...lineChartData
-      ]);
+    data.addColumn('number', 'EUR');
+    data.addColumn('number', 'GBP');
+    data.addColumn('number', 'CHF');
+    data.addColumn('number', 'CAD');
+    data.addRows([
+      ...lineChartData
+    ]);
 
     var options = {
-      title: 'Fluctuations in values of most traded currencies in range of last 1 week, base : USD',
+      title: `Fluctuations in values of most traded currencies in range of last ${deltaWeeksValue} week(s), base : USD`,
       chartArea: { width: '80%' },
+      animation: {
+        duration: 1000,
+        easing: 'out',
+        startup: true
+      }
     };
 
     var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
@@ -145,6 +171,11 @@
       vAxis: {
         title: 'Currency'
       },
+      animation: {
+          duration: 1000,
+          easing: 'out',
+          startup: true
+      }
     };
     var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
 
@@ -155,4 +186,5 @@
     $('a[href="' + location.pathname + '"]').addClass('active').attr('aria-current', 'page');
   });
 </script>
+
 </html>
