@@ -31,7 +31,6 @@ def getData():
     countries = os.path.join(SITE_ROOT, "static/data", "countries.json")
     data = json.load(open(countries))
     stringData = ",".join(data)
-    print("inside the code")
     r = requests.get(f'https://api.exchangerate.host/latest?base=USD&symbols={stringData})')
     if r.status_code == 200:
         ExchangeRateData = r.json()
@@ -50,7 +49,7 @@ now = datetime.now().astimezone(current_timezone)
 
 
 scheduler = BackgroundScheduler(daemon=True)
-scheduler.add_job(func=getData, trigger="interval", minutes=2, next_run_time=datetime.now().astimezone(current_timezone), timezone=current_timezone)
+scheduler.add_job(func=getData, trigger="interval", hours=24, next_run_time=datetime.now().astimezone(current_timezone), timezone=current_timezone)
 scheduler.start()
 
 # Shut down the scheduler when exiting the app
