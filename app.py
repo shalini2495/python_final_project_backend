@@ -59,7 +59,7 @@ now = datetime.now().astimezone(current_timezone)
 @app.route('/')
 def index():
     formatedDate = now.strftime("%Y-%m-%d")
-    formatedDateBeforeOneWeek = (now - timedelta(weeks=2)).strftime("%Y-%m-%d")
+    formatedDateBeforeOneWeek = (now - timedelta(weeks=1)).strftime("%Y-%m-%d")
     # Getting data by range of date
     findQuery = {
         '$and': [
