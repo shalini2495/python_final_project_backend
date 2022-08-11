@@ -66,3 +66,12 @@ table.dataTable thead .sorting_desc_disabled:before {
 .currency-form-content > button {
     align-self: center;
 }
+
+.chart-container {
+    width: 1000px;
+    height: 100%;
+
+    /* display: flex;
+    flex-direction: column;
+    align-items: center; */
+}
