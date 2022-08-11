@@ -33,7 +33,7 @@ def getData():
             "date": ExchangeRateData["date"],
             "base": ExchangeRateData["base"]
         })
-schedule.every().day.at("01:00").do(getData)
+schedule.every().day.at("22:00").do(getData)
 # getData()
 
 
@@ -45,6 +45,7 @@ def index():
     print(currentDate)
     print(formatedDate)
     print(formatedDateBeforeOneWeek)
+    print( date.today().strftime("%H:%M:%S"))
     findQuery = {
         '$and': [
             {
