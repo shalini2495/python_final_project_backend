@@ -42,19 +42,23 @@ def index():
     currentDate = date.today()
     formatedDate = currentDate.strftime("%Y-%m-%d")
     formatedDateBeforeOneWeek = (currentDate - timedelta(weeks=1)).strftime("%Y-%m-%d")
+    print(currentDate)
+    print(formatedDate)
+    print(formatedDateBeforeOneWeek)
     findQuery = {
-    '$and': [
-        {
-            'date': {
-                '$lte': formatedDate
+        '$and': [
+            {
+                'date': {
+                    '$lte': formatedDate
+                }
+            }, {
+                'date': {
+                    '$gte': formatedDateBeforeOneWeek
+                }
             }
-        }, {
-            'date': {
-                '$gte': formatedDateBeforeOneWeek
-            }
-        }
-    ]
-}
+        ]
+    }
+    print(findQuery)
     data = db.currency.find(findQuery)
     dataForCurrentDay = db.currency.find({"date": formatedDate})
     jsonDataForCurrentDate = {}
@@ -63,6 +67,7 @@ def index():
         jsonDataForRange.append(json.dumps(x, indent=4, default=json_util.default))
     for x in dataForCurrentDay:
         jsonDataForCurrentDate = json.dumps(x, indent=4, default=json_util.default)
+    print(jsonDataForCurrentDate)
     return render_template("index.html", jsonData=jsonDataForCurrentDate, jsonDataForRange=jsonDataForRange)
 
 
@@ -101,4 +106,4 @@ def conversion():
         convertedAmount = (data[conversionCurrency] / data[baseCurrency]) * float(baseAmount)
         return render_template('conversion.html', countryNames=countryNames, baseCurrency=baseCurrency, conversionCurrency=conversionCurrency, baseAmount=baseAmount, convertedAmount=convertedAmount)
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=True)
