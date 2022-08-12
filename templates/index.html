@@ -19,7 +19,7 @@
 
 <body>
 
-
+ <!-- We have used bootstrap to create our navbar -->
   <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
     <div class="container-fluid">
       <a class="navbar-brand" href="/">BDAT1004_Final_Project</a>
@@ -41,7 +41,7 @@
       </div>
     </div>
   </nav>
-
+ <!-- A section creation on home page to write intro paraghraph -->
   <section class="container home">
     <div class="intro-paragraph">
       <h1 class="heading">ALL</h1>
@@ -54,7 +54,7 @@
     </div>
     <p><img src="../static/images/background.jpg" alt="background" class="background-image"></p>
   </section>
-
+ <!-- Container class for google line chart and radio buttons -->
   <div class="chart-container">
     <div id="chart_div" style="margin-bottom: 8%;width: 100%;"></div>
     <form class="radioForm" action="" method="post">
@@ -90,7 +90,7 @@
   const data = {{ jsonData | tojson }};
   const { base, rates } = JSON.parse(data);
   const deltaWeeksValue = {{ deltaWeeks }};
-
+ // Calling our data by range of dates
   $(`#week${deltaWeeksValue}`)[0].checked = true;
   const lastWeekData = {{ jsonDataForRange | tojson }};
   let lineChartData = []
@@ -106,7 +106,7 @@
   google.charts.setOnLoadCallback(drawBarChart);
   google.charts.setOnLoadCallback(drawLineChart);
 
-
+  // We created a line chart from google and passing values
   function drawLineChart() {
     var data = new google.visualization.DataTable();
     data.addColumn('date', 'Date');
@@ -134,7 +134,7 @@
   }
 
 
-
+// We created a bar chart to show highest valued currencies of the world
   function drawBarChart() {
     const chartData = Object.keys(rates).reduce((acc, key) => {
       acc.push({
@@ -181,6 +181,7 @@
 
     chart.draw(data, options);
   }
+  // adding active class on nav bar links
   $(document).ready(function () {
     $('.nav-link.active').removeClass('active').removeAttr('aria-current');
     $('a[href="' + location.pathname + '"]').addClass('active').attr('aria-current', 'page');

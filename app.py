@@ -12,12 +12,11 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 import atexit
 
-# Creating flask framework
-
 SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
 
 # env file storing mongo atlas credentials
 load_dotenv()
+
 app = Flask(__name__, template_folder='templates')
 
 user = os.getenv("MONGODB_USER")
@@ -43,7 +42,7 @@ def getData():
             }},
             upsert=True
         )
-# Batch job that runs ebery 24 hours as per Canada/Eastern timezone    
+# Batch job that runs every 24 hours as per Canada/Eastern timezone    
 current_timezone = pytz.timezone("Canada/Eastern")
 now = datetime.now().astimezone(current_timezone)
 
@@ -84,6 +83,8 @@ def index():
     }
 
     data = db.currency.find(findQuery)
+
+    # Getting for current date
     dataForCurrentDay = db.currency.find({"date": formatedDate})
     jsonDataForCurrentDate = {}
     jsonDataForRange = []
@@ -94,11 +95,11 @@ def index():
         jsonDataForCurrentDate = json.dumps(
             x, indent=4, default=json_util.default)
     return render_template("index.html", jsonData=jsonDataForCurrentDate, jsonDataForRange=jsonDataForRange, deltaWeeks=deltaWeeks)
+
+
 # creating api to post data to our currencies.html page
 @app.route('/currencies')
-
-# getting all the data from mongodb
-def getAllCurrencies():
+def getAllCurrencies(): 
     now = datetime.now().astimezone(current_timezone)
     project={
         'rates': 1,
@@ -117,6 +118,7 @@ def getAllCurrencies():
 @app.route('/conversion', methods=['POST', 'GET'])
 def conversion():
     now = datetime.now().astimezone(current_timezone)
+# getting the rates of all currencies from mongodb collection for today's date
     project={
         'rates': 1,
         '_id': 0
@@ -132,7 +134,6 @@ def conversion():
     if(request.method == "GET"):
         return render_template('conversion.html', countryNames=countryNames)
     if(request.method == "POST"):
-        # getting data by id from mongo db
         data = json.loads(jsonData)['rates']
         baseCurrency = request.form['baseCurrency']
         conversionCurrency = request.form['conversionCurrency']

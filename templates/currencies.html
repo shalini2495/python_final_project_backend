@@ -23,6 +23,7 @@
 </head>
 <body>
   
+  <!-- We have used bootstrap to create our navbar -->
 
   <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
     <div class="container-fluid">
@@ -45,7 +46,7 @@
       </div>
     </div>
   </nav>
-
+<!-- We have used data table libarary to create a table -->
     <section class="container">
         <h2>Currencies</h2>
         <p id="table-heading">Currencies in comparision with USD on </p>
@@ -64,6 +65,7 @@
 
 </body>
 <script>
+   // Displaying all the currencies and their value in the table
      const data = {{ jsonData | tojson }};
      const currencyNameData = `{{countryNames}}`.split(',');
      for(let i = 0; i < currencyNameData.length; i++) {
@@ -106,6 +108,7 @@ for (let index = 0; index < currencyData.length; index++) {
         tr.append(tdvalue);
         $("tbody").append(tr);
     }
+    // adding active class on nav bar links
     $(document).ready(function() {
   $('.nav-link.active').removeClass('active').removeAttr('aria-current');
   $('a[href="' + location.pathname + '"]').addClass('active').attr('aria-current', 'page'); 

@@ -23,8 +23,8 @@
 </head>
 
 <body>
-  
 
+<!-- header begins -->
   <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
     <div class="container-fluid">
       <a class="navbar-brand" href="/">BDAT1004_Final_Project</a>
@@ -46,8 +46,8 @@
       </div>
     </div>
   </nav>
-
-
+<!-- header ends -->
+  <!-- Container class for html form where we are a creating a form for currency conversion -->
   <section class="container">
     <h2>Conversion</h2>
     <form action="" method="post">
@@ -82,6 +82,7 @@
 
 </body>
 <script>
+  // Fetching data by ID
   const currencyNameData = `{{countryNames}}`.split(',');
   for (let i = 0; i < currencyNameData.length; i++) {
     const baseOption = $(`<option value=${currencyNameData[i]} >${currencyNameData[i]}</option>`);
@@ -105,6 +106,7 @@
   if (baseAmountValue) {
     $("#baseAmount").val(baseAmountValue)
   }
+  // adding active class on nav bar links
   $(document).ready(function () {
     $('.nav-link.active').removeClass('active').removeAttr('aria-current');
     $('a[href="' + location.pathname + '"]').addClass('active').attr('aria-current', 'page');
